@@ -5,7 +5,9 @@ const app = express()
 const phonebook = require('./db.json')
 
 app.use(express.json())
-app.use(morgan('tiny'))
+
+morgan.token('payload', function (req, res) { return req.method === 'POST' ? JSON.stringify(req.body) : ''})
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :payload'))
 
 app.get('/api/persons', (request,response) => {
     response.json(phonebook)
