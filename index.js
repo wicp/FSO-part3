@@ -28,6 +28,10 @@ app.post('/api/persons', (request,response) => {
         return response.status(400).json({
             error: `missing ${!person?.name ? 'name' : 'number'}`
         })
+    } else if (phonebook.persons.find(existing => existing.name === person.name)) {
+        return response.status(409).json({
+            error: `person ${person.name} already exists`
+        })
     }
     const newPerson = {
         name: person.name,
