@@ -1,0 +1,17 @@
+GET http://localhost:3001/api/persons
+###
+GET http://localhost:3001/info
+###
+GET http://localhost:3001/api/persons/3
+###
+GET http://localhost:3001/api/persons/invalidID
+###
+DELETE http://localhost:3001/api/persons/3
+###
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+    "name": "foo",
+    "number": "123-456-789"
+}

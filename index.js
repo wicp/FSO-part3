@@ -3,6 +3,8 @@ const app = express()
 
 const phonebook = require('./db.json')
 
+app.use(express.json())
+
 app.get('/api/persons', (request,response) => {
     response.json(phonebook)
 })
@@ -16,6 +18,32 @@ app.get('/api/persons/:id', (request,response) => {
     } else {
         response.status(404).end()
     }
+})
+
+app.post('/api/persons', (request,response) => {
+    const person = request.body
+    console.log(request.headers,request.body)
+    if (!person?.name || !person?.number) {
+        console.log('invalid person',JSON.stringify(person))
+        return response.status(400).json({
+            error: `missing ${!person?.name ? 'name' : 'number'}`
+        })
+    }
+    const newPerson = {
+        name: person.name,
+        number: person.number,
+        id: Math.floor(Math.random()*1000)
+    }
+    phonebook.persons.push(newPerson)
+
+    response.json(newPerson)
+})
+
+app.delete('/api/persons/:id', (request,response) => {
+    const id = Number(request.params.id)
+    phonebook.persons = phonebook.persons.filter(person => person.id !== id)
+
+    response.status(204).end()
 })
 
 app.get('/info', (request,response) => {
