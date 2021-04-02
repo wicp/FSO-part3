@@ -1,16 +1,17 @@
 const express = require('express')
+const morgan = require('morgan')
 const app = express()
 
 const phonebook = require('./db.json')
 
 app.use(express.json())
+app.use(morgan('tiny'))
 
 app.get('/api/persons', (request,response) => {
     response.json(phonebook)
 })
 
 app.get('/api/persons/:id', (request,response) => {
-    console.log(`person ${JSON.stringify(request.params)}`)
     const id = Number(request.params.id)
     const person = phonebook.persons.find(person => person.id === id)
     if (person) {
@@ -22,7 +23,6 @@ app.get('/api/persons/:id', (request,response) => {
 
 app.post('/api/persons', (request,response) => {
     const person = request.body
-    console.log(request.headers,request.body)
     if (!person?.name || !person?.number) {
         console.log('invalid person',JSON.stringify(person))
         return response.status(400).json({
