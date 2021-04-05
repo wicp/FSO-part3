@@ -61,5 +61,5 @@ app.get('/info', (request,response) => {
 
 app.use(express.static('./build'))
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => console.log(`listening on ${PORT}`))
