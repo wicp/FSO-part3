@@ -10,7 +10,7 @@ morgan.token('payload', function (req, res) { return req.method === 'POST' ? JSO
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :payload'))
 
 app.get('/api/persons', (request,response) => {
-    response.json(phonebook)
+    response.json(phonebook.persons)
 })
 
 app.get('/api/persons/:id', (request,response) => {
@@ -59,6 +59,7 @@ app.get('/info', (request,response) => {
     `)
 })
 
+app.use(express.static('./build'))
 
 const PORT = 3001
 app.listen(PORT, () => console.log(`listening on ${PORT}`))
