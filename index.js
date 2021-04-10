@@ -5,6 +5,7 @@ const app = express()
 
 const phonebook = require("./db.json")
 
+app.use(express.static("./build"))
 app.use(express.json())
 
 morgan.token("payload", function (req, res) {
@@ -39,21 +40,14 @@ app.post("/api/persons", (request, response) => {
     return response.status(400).json({
       error: `missing ${!person?.name ? "name" : "number"}`,
     })
-  } else if (
-    phonebook.persons.find((existing) => existing.name === person.name)
-  ) {
-    return response.status(409).json({
-      error: `person ${person.name} already exists`,
-    })
   }
-  const newPerson = {
+  const newPerson = new Person({
     name: person.name,
     number: person.number,
-    id: Math.floor(Math.random() * 1000),
-  }
-  phonebook.persons.push(newPerson)
-
-  response.json(newPerson)
+  })
+  newPerson.save().then((result) => {
+    response.json(newPerson)
+  })
 })
 
 app.delete("/api/persons/:id", (request, response) => {
@@ -69,8 +63,6 @@ app.get("/info", (request, response) => {
         <p>${new Date()}</p>
     `)
 })
-
-app.use(express.static("./build"))
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => console.log(`listening on ${PORT}`))
