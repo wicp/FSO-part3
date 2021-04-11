@@ -6,7 +6,9 @@ GET http://localhost:3001/api/persons/3
 ###
 GET http://localhost:3001/api/persons/invalidID
 ###
-DELETE http://localhost:3001/api/persons/3
+DELETE http://localhost:3001/api/persons/123456789abc 
+###
+DELETE http://localhost:3001/api/persons/invalidID
 ###
 POST http://localhost:3001/api/persons
 Content-Type: application/json
