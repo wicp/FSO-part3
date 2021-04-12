@@ -3,8 +3,6 @@ const morgan = require("morgan")
 const Person = require("./models/person.js")
 const app = express()
 
-const phonebook = require("./db.json")
-
 app.use(express.static("./build"))
 app.use(express.json())
 
@@ -17,10 +15,12 @@ app.use(
   )
 )
 
-app.get("/api/persons", (request, response) => {
-  Person.find({}).then((result) => {
-    response.json(result)
-  })
+app.get("/api/persons", (request, response, next) => {
+  Person.find({})
+    .then((result) => {
+      response.json(result)
+    })
+    .catch(next)
 })
 
 app.get("/api/persons/:id", (request, response, next) => {
@@ -28,24 +28,21 @@ app.get("/api/persons/:id", (request, response, next) => {
     .then((result) => {
       response.json(result)
     })
-    .catch((error) => next(error))
+    .catch(next)
 })
 
-app.post("/api/persons", (request, response) => {
+app.post("/api/persons", (request, response, next) => {
   const person = request.body
-  if (!person?.name || !person?.number) {
-    console.log("invalid person", JSON.stringify(person))
-    return response.status(400).json({
-      error: `missing ${!person?.name ? "name" : "number"}`,
-    })
-  }
   const newPerson = new Person({
     name: person.name,
     number: person.number,
   })
-  newPerson.save().then((result) => {
-    response.json(newPerson)
-  })
+  newPerson
+    .save()
+    .then((result) => {
+      response.json(result)
+    })
+    .catch(next)
 })
 
 app.put("/api/persons/:id", (request, response, next) => {
@@ -56,7 +53,7 @@ app.put("/api/persons/:id", (request, response, next) => {
     .then((result) => {
       response.json(result)
     })
-    .catch((error) => next(error))
+    .catch(next)
 })
 
 app.delete("/api/persons/:id", (request, response, next) => {
@@ -64,24 +61,25 @@ app.delete("/api/persons/:id", (request, response, next) => {
     .then((result) => {
       response.status(204).end()
     })
-    .catch((error) => next(error))
+    .catch(next)
 })
 
 app.get("/info", (request, response, next) => {
   Person.countDocuments()
     .then((result) => {
       response.send(`
-        <p>Phonebook has info for ${result} people</p>
-        <p>${new Date()}</p>`
-      )
+      <p>Phonebook has info for ${result} people</p>
+      <p>${new Date()}</p>`)
     })
-    .catch((error) => next(error))
+    .catch(next)
 })
 
 const errorHandler = (error, request, response, next) => {
   console.error(error)
   if (error.name === "CastError") {
     return response.status(400).json({ error: "Malformatted ID" })
+  } else if (error.name === "ValidationError") {
+    return response.status(400).json({ error: error.message })
   }
   next(error)
 }

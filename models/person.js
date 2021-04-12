@@ -1,5 +1,6 @@
 const { db_username, db_password } = require("../credentials.json")
 const mongoose = require("mongoose")
+const uniqueValidator = require("mongoose-unique-validator")
 
 const url = `mongodb+srv://${db_username}:${db_password}@sandbox.lypcw.mongodb.net/phonebook-app`
 
@@ -11,9 +12,17 @@ mongoose.connect(url, {
 })
 
 const personSchema = new mongoose.Schema({
-  name: String,
-  number: String,
+  name: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  number: {
+    type: String,
+    required: true,
+  },
 })
+personSchema.plugin(uniqueValidator)
 
 personSchema.set("toJSON", {
   transform: (document, returnedObject) => {
