@@ -45,7 +45,7 @@ const App = () => {
           newNotification(`Updated number for ${response.data.name}`,'info',3000)
         }
         )
-        .catch(error => newNotification('Could not update number','error'))
+        .catch(error => newNotification(error.response.data.error,'error'))
       }
     }
     else {
@@ -58,7 +58,7 @@ const App = () => {
         setPersons(persons.concat(response.data))
         newNotification(`Added ${response.data.name}`,'info',3000)
       })
-      .catch(error => newNotification('Could not update phonebook','error'))
+      .catch(error => newNotification(error.response.data.error,'error'))
     }
     setNewName('')
     setNewNumber('')
