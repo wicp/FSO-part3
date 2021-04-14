@@ -1,4 +1,3 @@
-const { db_username, db_password } = require("./credentials.json")
 const mongoose = require("mongoose")
 
 if (process.argv.length < 3) {
@@ -6,7 +5,11 @@ if (process.argv.length < 3) {
   process.exit(1)
 }
 
-const password = process.argv[2]
+let db_password = process.argv[2]
+require("dotenv").config()
+const db_username = process.env.DB_USERNAME
+db_password = process.env.DB_PASSWORD
+
 const url = `mongodb+srv://${db_username}:${db_password}@sandbox.lypcw.mongodb.net/phonebook-app`
 
 mongoose.connect(url, {

@@ -6,7 +6,7 @@ const app = express()
 app.use(express.static("./build"))
 app.use(express.json())
 
-morgan.token("payload", function (req, res) {
+morgan.token("payload", function (req) {
   return req.method === "POST" ? JSON.stringify(req.body) : ""
 })
 app.use(
@@ -49,7 +49,10 @@ app.put("/api/persons/:id", (request, response, next) => {
   const update = {
     number: request.body.number,
   }
-  Person.findByIdAndUpdate(request.params.id, update, { new: true, runValidators: true})
+  Person.findByIdAndUpdate(request.params.id, update, {
+    new: true,
+    runValidators: true,
+  })
     .then((result) => {
       response.json(result)
     })
@@ -58,7 +61,7 @@ app.put("/api/persons/:id", (request, response, next) => {
 
 app.delete("/api/persons/:id", (request, response, next) => {
   Person.findByIdAndRemove(request.params.id)
-    .then((result) => {
+    .then(() => {
       response.status(204).end()
     })
     .catch(next)
